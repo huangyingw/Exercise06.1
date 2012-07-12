@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +12,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class ProductDAO implements IProductDAO {
@@ -76,71 +76,34 @@ public class ProductDAO implements IProductDAO {
 						namedParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jdbc.IProductDAO#load(int)
-	 */
-	@Override
 	public Product load(int productNumber) {
-		Product employee = null;
-		Connection conn = null;
-		PreparedStatement prepareGetProduct = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-			prepareGetProduct = conn
-					.prepareStatement("SELECT * FROM Product WHERE number = ?");
-			prepareGetProduct.setLong(1, productNumber);
-
-			rs = prepareGetProduct.executeQuery();
-			if (rs.next()) {
-				String name = rs.getString("name");
-				double price = rs.getDouble("price");
-				rs.close();
-				employee = new Product(productNumber, name, price);
-			}
-		} catch (SQLException e) {
-			System.out.println("SQLException in ProductDAO load() :" + e);
-		} finally {
-			try {
-				rs.close();
-				prepareGetProduct.close();
-				closeConnection(conn);
-			} catch (SQLException e1) {
-				// no action needed
-			}
-		}
-		return employee;
+		NamedParameterJdbcTemplate jdbcTempl = new NamedParameterJdbcTemplate(
+				dataSource);
+		Map<String, Object> namedParameters = new HashMap<String, Object>();
+		namedParameters.put("number", productNumber);
+		Product product = jdbcTempl.queryForObject(
+				"SELECT * FROM Product WHERE number =:number ",
+				namedParameters, new RowMapper<Product>() {
+					public Product mapRow(ResultSet resultSet, int i)
+							throws SQLException {
+						return new Product(resultSet.getInt("number"),
+								resultSet.getString("name"), resultSet
+										.getDouble("price"));
+					}
+				});
+		return product;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jdbc.IProductDAO#delete(jdbc.Product)
-	 */
-	@Override
 	public void delete(Product product) {
-		Connection conn = null;
-		PreparedStatement prepareDeleteProduct = null;
+		NamedParameterJdbcTemplate jdbcTempl = new NamedParameterJdbcTemplate(
+				dataSource);
+		Map<String, Object> namedParameters = new HashMap<String, Object>();
+		namedParameters.put("number", product.getProductnumber());
 
-		try {
-			conn = getConnection();
-			prepareDeleteProduct = conn
-					.prepareStatement("DELETE FROM product WHERE number = ?");
-			prepareDeleteProduct.setInt(1, product.getProductnumber());
+		@SuppressWarnings("unused")
+		int updateResult = jdbcTempl.update(
+				"DELETE FROM product WHERE number =:number", namedParameters);
 
-			int updateresult = prepareDeleteProduct.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("SQLException in ProductDAO delete() :" + e);
-		} finally {
-			try {
-				prepareDeleteProduct.close();
-				closeConnection(conn);
-			} catch (SQLException e1) {
-				// no action needed
-			}
-		}
 	}
 
 	/*
