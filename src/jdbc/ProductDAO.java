@@ -62,34 +62,18 @@ public class ProductDAO implements IProductDAO {
 				namedParameters);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jdbc.IProductDAO#update(jdbc.Product)
-	 */
-	@Override
 	public void update(Product product) {
-		Connection conn = null;
-		PreparedStatement prepareUpdateProduct = null;
-		try {
-			conn = getConnection();
-			prepareUpdateProduct = conn
-					.prepareStatement("UPDATE product SET name= ?, price= ? WHERE number=?");
-			prepareUpdateProduct.setString(1, product.getProductName());
-			prepareUpdateProduct.setDouble(2, product.getPrice());
-			prepareUpdateProduct.setInt(3, product.getProductnumber());
+		NamedParameterJdbcTemplate jdbcTempl = new NamedParameterJdbcTemplate(
+				dataSource);
+		Map<String, Object> namedParameters = new HashMap<String, Object>();
+		namedParameters.put("productnumber", product.getProductnumber());
+		namedParameters.put("name", product.getProductName());
+		namedParameters.put("price", product.getPrice());
 
-			int updateresult = prepareUpdateProduct.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("SQLException in ProductDAO update() :" + e);
-		} finally {
-			try {
-				prepareUpdateProduct.close();
-				closeConnection(conn);
-			} catch (SQLException e1) {
-				// no action needed
-			}
-		}
+		@SuppressWarnings("unused")
+		int updateResult = jdbcTempl
+				.update("UPDATE product SET name=:name, price=:price  WHERE productnumber=:productnumber",
+						namedParameters);
 	}
 
 	/*

@@ -20,7 +20,7 @@ public class Application {
 		showProducts(productDAO);
 		// update Product
 		product2.setPrice(175.00);
-		productDAO.update(product2);
+		// productDAO.update(product2);
 		// get Product
 		Product product3 = productDAO.load(1106);
 		if (product3 != null)
