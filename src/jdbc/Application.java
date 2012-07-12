@@ -10,7 +10,7 @@ public class Application {
 	public static void main(String[] args) {
 		ApplicationContext context = new ClassPathXmlApplicationContext(
 				"springconfig.xml");
-		IProductDAO productDAO = new ProductDAO();
+		ProductDAO productDAO = context.getBean("productDAO", ProductDAO.class);
 		// create Products
 		Product product1 = new Product(1101, "Flatscreen TV", 445.25);
 		productDAO.save(product1);

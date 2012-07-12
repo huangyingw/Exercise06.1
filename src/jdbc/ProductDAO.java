@@ -8,8 +8,12 @@ import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.sql.DataSource;
+
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 public class ProductDAO implements IProductDAO {
 	private DataSource dataSource;
@@ -44,34 +48,18 @@ public class ProductDAO implements IProductDAO {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jdbc.IProductDAO#save(jdbc.Product)
-	 */
-	@Override
 	public void save(Product product) {
-		Connection conn = null;
-		PreparedStatement prepareCreateProduct = null;
-		try {
-			conn = getConnection();
-			prepareCreateProduct = conn
-					.prepareStatement("INSERT INTO product VALUES ( ?, ?, ?)");
-			prepareCreateProduct.setInt(1, product.getProductnumber());
-			prepareCreateProduct.setString(2, product.getProductName());
-			prepareCreateProduct.setDouble(3, product.getPrice());
+		NamedParameterJdbcTemplate jdbcTempl = new NamedParameterJdbcTemplate(
+				dataSource);
+		Map<String, Object> namedParameters = new HashMap<String, Object>();
+		namedParameters.put("productnumber", product.getProductnumber());
+		namedParameters.put("name", product.getProductName());
+		namedParameters.put("price", product.getPrice());
 
-			int updateresult = prepareCreateProduct.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("SQLException in ProductDAO create() :" + e);
-		} finally {
-			try {
-				prepareCreateProduct.close();
-				closeConnection(conn);
-			} catch (SQLException e1) {
-				// no action needed
-			}
-		}
+		@SuppressWarnings("unused")
+		int updateResult = jdbcTempl.update(
+				"INSERT INTO product VALUES(:productnumber,:name,:price)",
+				namedParameters);
 	}
 
 	/*
