@@ -9,7 +9,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.sql.DataSource;
+
 public class ProductDAO implements IProductDAO {
+	private DataSource dataSource;
+
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
 	public ProductDAO() {
 		try {
@@ -37,7 +44,9 @@ public class ProductDAO implements IProductDAO {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jdbc.IProductDAO#save(jdbc.Product)
 	 */
 	@Override
@@ -65,7 +74,9 @@ public class ProductDAO implements IProductDAO {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jdbc.IProductDAO#update(jdbc.Product)
 	 */
 	@Override
@@ -93,7 +104,9 @@ public class ProductDAO implements IProductDAO {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jdbc.IProductDAO#load(int)
 	 */
 	@Override
@@ -129,7 +142,9 @@ public class ProductDAO implements IProductDAO {
 		return employee;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jdbc.IProductDAO#delete(jdbc.Product)
 	 */
 	@Override
@@ -156,7 +171,9 @@ public class ProductDAO implements IProductDAO {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see jdbc.IProductDAO#getAllProducts()
 	 */
 	@Override

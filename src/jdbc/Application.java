@@ -8,8 +8,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Application {
 
 	public static void main(String[] args) {
-		// ApplicationContext context = new ClassPathXmlApplicationContext(
-		// "springconfig.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext(
+				"springconfig.xml");
 		IProductDAO productDAO = new ProductDAO();
 		// create Products
 		Product product1 = new Product(1101, "Flatscreen TV", 445.25);
